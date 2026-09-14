@@ -5,19 +5,9 @@ metadata:
 spec:
   pipelineRef:
     name: tax-calculator-pipeline
-  taskRunTemplate:
-    podTemplate:
-      securityContext:
-        fsGroup: 1000
   workspaces:
     - name: pipeline-workspace
-      volumeClaimTemplate:
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 1Gi
+      emptyDir: {}
   params:
     - name: repo-url
       value: https://github.com/jawariaqazi585-ai/zntwk-tax_calculator.git
