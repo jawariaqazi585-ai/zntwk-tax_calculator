@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: tax-calculator-pipeline
+spec:
+  workspaces:
+    - name: pipeline-workspace
+  params:
+    - name: repo-url
+      type: string
+    - name: pathToContext
+      type: string
+      default: "."
+    - name: pathToDockerFile
+      type: string
+      default: "Dockerfile"
+    - name: imageUrl
+      type: string
+    - name: imageTag
+      type: string
+      default: "latest"
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: pipeline-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: deleteExisting
+          value: "true"
+
+    - name: npm-install
+      taskRef:
+        name: npm
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+
+    - name: tests
+      taskRef:
+        name: jasmine
+      runAfter:
+        - npm-install
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+
+    - name: build
+      taskRef:
+        name: buildah
+      runAfter:
+        - tests
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+      params:
+        - name: IMAGE
+          value: $(params.imageUrl):$(params.imageTag)
+        - name: CONTEXT
+          value: $(params.pathToContext)
+        - name: DOCKERFILE
+          value: $(params.pathToDockerFile)

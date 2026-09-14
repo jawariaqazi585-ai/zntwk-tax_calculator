@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: tax-calculator-pipeline-run-
+spec:
+  pipelineRef:
+    name: tax-calculator-pipeline
+  podTemplate:
+    securityContext:
+      fsGroup: 1000
+  workspaces:
+    - name: pipeline-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: repo-url
+      value: https://github.com/jawariaqazi585-ai/zntwk-tax_calculator.git
+    - name: imageUrl
+      value: us.icr.io/<your_namespace>/tax-calculator
+    - name: imageTag
+      value: "1.0"
