@@ -5,9 +5,10 @@ metadata:
 spec:
   pipelineRef:
     name: tax-calculator-pipeline
-  podTemplate:
-    securityContext:
-      fsGroup: 1000
+  taskRunTemplate:
+    podTemplate:
+      securityContext:
+        fsGroup: 1000
   workspaces:
     - name: pipeline-workspace
       volumeClaimTemplate:
