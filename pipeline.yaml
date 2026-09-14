@@ -35,8 +35,9 @@ spec:
     - name: npm-install
       taskRef:
         name: npm
-      runAfter:
-        - fetch-repository
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
       workspaces:
         - name: source
           workspace: pipeline-workspace
@@ -46,6 +47,9 @@ spec:
         name: jasmine
       runAfter:
         - npm-install
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
       workspaces:
         - name: source
           workspace: pipeline-workspace
